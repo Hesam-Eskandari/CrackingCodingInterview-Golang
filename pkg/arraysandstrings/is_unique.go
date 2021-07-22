@@ -1,5 +1,11 @@
 package arraysandstrings
 
+/*
+Cracking the coding interview, 6th edition, page 90
+Is Unique: Implement an algorithm to determine if a string has all unique characters.
+What if you cannot use additional data structures.
+*/
+
 type uniqueString struct {
 	str string
 }
