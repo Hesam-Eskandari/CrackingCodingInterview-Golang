@@ -1,7 +1,6 @@
 package arraysandstrings
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -50,7 +49,6 @@ func (p *palindromePermutation) isPalindromePermute() bool {
 	hmap := make(map[string]int)
 	for _, str := range split {
 		bytePosition := []byte(str)[0]
-		fmt.Println(bytePosition, str, p.ignoreCase)
 		if (bytePosition >= p.minLower && bytePosition <= p.maxLower) ||
 			(bytePosition >= p.minUpper && bytePosition <= p.maxUpper) {
 			if _, ok := hmap[str]; ok {
@@ -60,7 +58,6 @@ func (p *palindromePermutation) isPalindromePermute() bool {
 			}
 		}
 	}
-	fmt.Println(hmap)
 	countOdd := 0
 	for _, value := range hmap {
 		if value%2 != 0 {
