@@ -30,11 +30,11 @@ func (m *matrix) rotateMatrix() {
 			break
 		}
 		for index := range m.mat[start][start:end] {
-			top := m.mat[start][start+index]
-			m.mat[start][start+index] = m.mat[end-index][start]
-			m.mat[end-index][start] = m.mat[end][end-index]
-			m.mat[end][end-index] = m.mat[start+index][end]
-			m.mat[start+index][end] = top
+			top := m.mat[start][start+index]                    // store top row element
+			m.mat[start][start+index] = m.mat[end-index][start] // element(top row) <- element(left col)
+			m.mat[end-index][start] = m.mat[end][end-index]     // element(left col) <- element(bottom row)
+			m.mat[end][end-index] = m.mat[start+index][end]     // element(bottom row) <- element(right col)
+			m.mat[start+index][end] = top                       // element(right col) <- element(top row)
 		}
 	}
 }
