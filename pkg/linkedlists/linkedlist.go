@@ -70,3 +70,26 @@ func (l *linkedList) deleteDuplicates(noAdditionalDatastructures bool) {
 		}
 	}
 }
+
+func (l *linkedList) kthToLast(k int) *list.Element {
+	elementAhead := l.list.Front()
+	elementDelay := l.list.Front()
+	if elementAhead == nil || k < 0 {
+		return nil
+	}
+	if k == 0 {
+		k = 1
+	}
+	count := 0
+	for elementAhead != nil {
+		count += 1
+		if count > k {
+			elementDelay = elementDelay.Next()
+		}
+		elementAhead = elementAhead.Next()
+	}
+	if count < k {
+		return nil
+	}
+	return elementDelay
+}
