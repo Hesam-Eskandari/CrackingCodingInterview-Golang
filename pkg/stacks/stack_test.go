@@ -30,7 +30,6 @@ func (s *Stack) assertEqualArray(t *testing.T, array interface{}) {
 	default:
 		panic(fmt.Sprintf("expected an array, received %v", reflect.TypeOf(array).Kind()))
 	}
-
 }
 
 func (s *Stack) assertEqual(t *testing.T, stack *Stack) {
@@ -68,12 +67,12 @@ func (s *Stack) assertLength(t *testing.T, length int) {
 
 func setUpStack() (stack *Stack, expectedArray []int) {
 	stack = newStack()
-	expectedArray = []int{1}
+	expectedArray = []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	stack.AppendArray(expectedArray)
 	return
 }
 
-func TestStack_Array(t *testing.T) {
+func TestStack_ToArray(t *testing.T) {
 	stack, expectedArray := setUpStack()
 	stack.assertEqualArray(t, expectedArray)
 
@@ -108,4 +107,35 @@ func TestStack_Pop(t *testing.T) {
 		newTopValue = nil
 	}
 	stack.assertEqualTop(t, newTopValue)
+}
+
+func TestStack_Reverse(t *testing.T) {
+	stack, initialArray := setUpStack()
+	reversedArray := make([]interface{}, len(initialArray))
+	for index, value := range initialArray {
+		reverseIndex := len(reversedArray) - index - 1
+		reversedArray[reverseIndex] = value
+	}
+	stack = stack.Reverse()
+	stack.assertLength(t, len(initialArray))
+	stack.assertEqualTop(t, initialArray[0])
+	stack.assertEqual(t, stack.Reverse())
+	stack.assertEqualArray(t, reversedArray)
+}
+
+func TestStack_AppendArray(t *testing.T) {
+	stack, initialArray := setUpStack()
+	arrayToAppend := []int{21, 22, 23, 24, 25, 26, 27, 28, 29}
+	stack.AppendArray(arrayToAppend)
+	stack.assertLength(t, len(initialArray)+len(arrayToAppend))
+	stack.assertEqualTop(t, arrayToAppend[len(arrayToAppend)-1])
+	stack.assertEqualArray(t, append(initialArray, arrayToAppend...))
+}
+
+func TestStack_AppendReverse(t *testing.T) {
+	firstStack, firstArray := setUpStack()
+	secondStack, secondArray := setUpStack()
+	firstStack.AppendReverse(secondStack)
+	firstStack.assertLength(t, len(firstArray)+len(secondArray))
+	firstStack.assertEqualTop(t, secondArray[0])
 }
