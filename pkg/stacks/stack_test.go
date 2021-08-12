@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"sort"
 	"testing"
 	"time"
 )
@@ -78,19 +79,25 @@ func (s *Stack) assertLength(t *testing.T, length int) {
 	}
 }
 
-func setUpStack() (stack *Stack, expectedArray []int) {
+func setUpStack(size ...int) (stack *Stack, expectedArray []int) {
 	stack = NewStack()
 	rand.Seed(time.Now().UnixNano())
-	expectedArray = make([]int, 0, rand.Intn(20)+10)
-	for index := 0; index < cap(expectedArray); index++ {
-		expectedArray = append(expectedArray, rand.Intn(100))
+	var capacity int
+	if len(size) == 0 {
+		capacity = rand.Intn(20) + 10
+	} else {
+		capacity = size[0]
+	}
+	expectedArray = make([]int, 0, capacity)
+	for index := 0; index < capacity; index++ {
+		expectedArray = append(expectedArray, rand.Intn(1000))
 	}
 	stack.AppendArray(expectedArray)
 	return
 }
 
 func TestStack_ToArray(t *testing.T) {
-	stack, expectedArray := setUpStack()
+	stack, expectedArray := setUpStack(10)
 	stack.assertEqualArray(t, expectedArray)
 
 }
@@ -142,7 +149,7 @@ func TestStack_Reverse(t *testing.T) {
 
 func TestStack_AppendArray(t *testing.T) {
 	stack, initialArray := setUpStack()
-	arrayToAppend := []int{21, 22, 23, 24, 25, 26, 27, 28, 29}
+	_, arrayToAppend := setUpStack()
 	stack.AppendArray(arrayToAppend)
 	stack.assertLength(t, len(initialArray)+len(arrayToAppend))
 	stack.assertEqualTop(t, arrayToAppend[len(arrayToAppend)-1])
@@ -159,7 +166,7 @@ func TestStack_AppendReverse(t *testing.T) {
 
 func TestStack_Min(t *testing.T) {
 	stack := NewStack()
-	arr := []int{4, 2, 6, 3, 2, 4, 7, 1, 8, 0, 2}
+	_, arr := setUpStack()
 	min := arr[0]
 	oldMin := min
 	for index, value := range arr {
@@ -188,4 +195,11 @@ func TestStack_Min(t *testing.T) {
 		stack.Push(value)
 		oldMin = min
 	}
+}
+
+func TestStack_SortN(t *testing.T) {
+	stack, arr := setUpStack()
+	sort.Ints(arr)
+	stack.SortN()
+	stack.assertEqualArray(t, arr)
 }

@@ -1,6 +1,8 @@
 package Stacks
 
-import "reflect"
+import (
+	"reflect"
+)
 
 type (
 	node struct {
@@ -25,6 +27,9 @@ func NewStack() *Stack {
 
 // Top returns the value of the top of the stack
 func (s *Stack) Top() interface{} {
+	if s.top == nil {
+		return nil
+	}
 	return s.top.value
 }
 
@@ -171,5 +176,42 @@ func (s *Stack) pushMin(value interface{}) {
 			prev:  s.min,
 		}
 		s.min = node
+	}
+}
+
+// SortN replace a stack with a sorted version of it
+// only one additional stack is allowed to be used
+// only push, pop, top and len methods are allowed to be used
+// runs in O(n) of space and O(n^2) of time complexity where n = stack.Len()
+// assume that the values are of type int
+func (s *Stack) SortN() {
+	if s.Top() == nil {
+		return
+	}
+	switch s.Top().(type) {
+	case int:
+	default:
+		return
+	}
+	stack := NewStack()
+	for s.Top() != nil {
+		if stack.Top() == nil {
+			stack.Push(s.Pop())
+			continue
+		}
+		value := s.Top().(int)
+		count := 0
+		for stack.Top() != nil && stack.Top().(int) < value {
+			s.Push(stack.Pop())
+			count += 1
+		}
+		stack.Push(value)
+		for ; count > 0; count-- {
+			stack.Push(s.Pop())
+		}
+		s.Pop()
+	}
+	for stack.Top() != nil {
+		s.Push(stack.Pop())
 	}
 }
