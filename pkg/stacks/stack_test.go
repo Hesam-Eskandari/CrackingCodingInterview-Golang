@@ -9,21 +9,21 @@ import (
 	"time"
 )
 
-func (s *Stack) assertEqualArray(t *testing.T, array interface{}) {
+func (s *stack) assertEqualArray(t *testing.T, array interface{}) {
 	if s == nil {
-		panic("assertEqualArray: expected a stack, received nil")
+		panic("assertEqualArray: expected a newStack, received nil")
 	}
 	switch reflect.TypeOf(array).Kind() {
 	case reflect.Slice:
 		arr := reflect.ValueOf(array)
 		top := s.top
 		if s.length != arr.Len() {
-			t.Errorf("assertEqualArray error: stack and array don't have the same length")
+			t.Errorf("assertEqualArray error: newStack and array don't have the same length")
 		} else {
 			for index := arr.Len() - 1; index >= 0; index-- {
 
 				if top.value != arr.Index(index).Interface() {
-					t.Errorf("assertEqualArray error: the element %v of stack with value %v is not "+
+					t.Errorf("assertEqualArray error: the element %v of newStack with value %v is not "+
 						"equal to item %v from array with value %v", arr.Len()-index, top.value, index, arr.Index(index))
 					break
 				}
@@ -35,19 +35,19 @@ func (s *Stack) assertEqualArray(t *testing.T, array interface{}) {
 	}
 }
 
-func (s *Stack) assertEqual(t *testing.T, stack *Stack) {
-	if s == nil || stack == nil {
-		panic("assertEqual: expected a stack, received nil")
+func (s *stack) assertEqual(t *testing.T, newStack *stack) {
+	if s == nil || newStack == nil {
+		panic("assertEqual: expected a newStack, received nil")
 	}
-	if s.length != stack.length {
+	if s.length != newStack.length {
 		t.Errorf("assertEqual: two stacks don't have the same length. \n"+
-			"stack 1: %v \n stack 2: %v", s.ToArray(), stack.ToArray())
+			"newStack 1: %v \n newStack 2: %v", s.ToArray(), newStack.ToArray())
 	}
 }
 
-func (s *Stack) assertEqualMin(t *testing.T, value interface{}) {
+func (s *stack) assertEqualMin(t *testing.T, value interface{}) {
 	if s == nil {
-		panic("assertEqualMin: expected a stack, received nil")
+		panic("assertEqualMin: expected a newStack, received nil")
 	}
 	if (s.min != nil && value == nil) || (s.min == nil && value != nil) {
 		t.Errorf("assertEqualMin: single nil error,  %v is not equal to %v", s.min, value)
@@ -56,9 +56,9 @@ func (s *Stack) assertEqualMin(t *testing.T, value interface{}) {
 	}
 }
 
-func (s *Stack) assertEqualTop(t *testing.T, value interface{}) {
+func (s *stack) assertEqualTop(t *testing.T, value interface{}) {
 	if s == nil {
-		panic("assertEqualTop: expected a stack, received nil")
+		panic("assertEqualTop: expected a newStack, received nil")
 	}
 	if s.top != nil && value != s.top.value {
 		t.Errorf("assertEqualTop: expected the top value to be %v but"+
@@ -70,17 +70,17 @@ func (s *Stack) assertEqualTop(t *testing.T, value interface{}) {
 	}
 }
 
-func (s *Stack) assertLength(t *testing.T, length int) {
+func (s *stack) assertLength(t *testing.T, length int) {
 	if s == nil {
-		panic("assertEqualArray: expected a stack, received nil")
+		panic("assertEqualArray: expected a newStack, received nil")
 	}
 	if s.length != length {
-		t.Errorf("expected the stack to be of length %v, but its length is %v", length, s.length)
+		t.Errorf("expected the newStack to be of length %v, but its length is %v", length, s.length)
 	}
 }
 
-func setUpStack(size ...int) (stack *Stack, expectedArray []int) {
-	stack = NewStack()
+func setUpStack(size ...int) (newStack *stack, expectedArray []int) {
+	newStack = NewStack()
 	rand.Seed(time.Now().UnixNano())
 	var capacity int
 	if len(size) == 0 {
@@ -92,68 +92,68 @@ func setUpStack(size ...int) (stack *Stack, expectedArray []int) {
 	for index := 0; index < capacity; index++ {
 		expectedArray = append(expectedArray, rand.Intn(1000))
 	}
-	stack.AppendArray(expectedArray)
+	newStack.AppendArray(expectedArray)
 	return
 }
 
 func TestStack_ToArray(t *testing.T) {
-	stack, expectedArray := setUpStack(10)
-	stack.assertEqualArray(t, expectedArray)
+	newStack, expectedArray := setUpStack(10)
+	newStack.assertEqualArray(t, expectedArray)
 
 }
 
 func TestStack_Len(t *testing.T) {
-	stack, expectedArray := setUpStack()
-	stack.assertLength(t, len(expectedArray))
+	newStack, expectedArray := setUpStack()
+	newStack.assertLength(t, len(expectedArray))
 }
 
 func TestStack_Top(t *testing.T) {
-	stack, expectedArray := setUpStack()
-	stack.assertEqualTop(t, expectedArray[len(expectedArray)-1])
+	newStack, expectedArray := setUpStack()
+	newStack.assertEqualTop(t, expectedArray[len(expectedArray)-1])
 }
 
 func TestStack_Push(t *testing.T) {
-	stack, expectedArray := setUpStack()
+	newStack, expectedArray := setUpStack()
 	add := 999
-	stack.Push(add)
-	stack.assertEqualTop(t, add)
-	stack.assertLength(t, len(expectedArray)+1)
-	stack.assertEqualArray(t, append(expectedArray, add))
+	newStack.Push(add)
+	newStack.assertEqualTop(t, add)
+	newStack.assertLength(t, len(expectedArray)+1)
+	newStack.assertEqualArray(t, append(expectedArray, add))
 }
 
 func TestStack_Pop(t *testing.T) {
-	stack, expectedArray := setUpStack()
-	stack.Pop()
+	newStack, expectedArray := setUpStack()
+	newStack.Pop()
 	var newTopValue interface{}
 	if len(expectedArray) > 1 {
 		newTopValue = expectedArray[len(expectedArray)-2]
 	} else {
 		newTopValue = nil
 	}
-	stack.assertEqualTop(t, newTopValue)
+	newStack.assertEqualTop(t, newTopValue)
 }
 
 func TestStack_Reverse(t *testing.T) {
-	stack, initialArray := setUpStack()
+	newStack, initialArray := setUpStack()
 	reversedArray := make([]interface{}, len(initialArray))
 	for index, value := range initialArray {
 		reverseIndex := len(reversedArray) - index - 1
 		reversedArray[reverseIndex] = value
 	}
-	stack = stack.Reverse()
-	stack.assertLength(t, len(initialArray))
-	stack.assertEqualTop(t, initialArray[0])
-	stack.assertEqual(t, stack.Reverse())
-	stack.assertEqualArray(t, reversedArray)
+	newStack = newStack.Reverse()
+	newStack.assertLength(t, len(initialArray))
+	newStack.assertEqualTop(t, initialArray[0])
+	newStack.assertEqual(t, newStack.Reverse())
+	newStack.assertEqualArray(t, reversedArray)
 }
 
 func TestStack_AppendArray(t *testing.T) {
-	stack, initialArray := setUpStack()
+	newStack, initialArray := setUpStack()
 	_, arrayToAppend := setUpStack()
-	stack.AppendArray(arrayToAppend)
-	stack.assertLength(t, len(initialArray)+len(arrayToAppend))
-	stack.assertEqualTop(t, arrayToAppend[len(arrayToAppend)-1])
-	stack.assertEqualArray(t, append(initialArray, arrayToAppend...))
+	newStack.AppendArray(arrayToAppend)
+	newStack.assertLength(t, len(initialArray)+len(arrayToAppend))
+	newStack.assertEqualTop(t, arrayToAppend[len(arrayToAppend)-1])
+	newStack.assertEqualArray(t, append(initialArray, arrayToAppend...))
 }
 
 func TestStack_AppendReverse(t *testing.T) {
@@ -165,55 +165,55 @@ func TestStack_AppendReverse(t *testing.T) {
 }
 
 func TestStack_Min(t *testing.T) {
-	stack := NewStack()
+	newStack := NewStack()
 	_, arr := setUpStack()
 	min := arr[0]
 	oldMin := min
 	for index, value := range arr {
 		t.Run(fmt.Sprintf("before push. index: %v, value: %v", index, value), func(t *testing.T) {
 			if index == 0 {
-				stack.assertEqualMin(t, nil)
+				newStack.assertEqualMin(t, nil)
 			} else {
-				stack.assertEqualMin(t, min)
+				newStack.assertEqualMin(t, min)
 			}
 		})
-		stack.Push(value)
+		newStack.Push(value)
 		if value < min {
 			min = value
 		}
 		t.Run(fmt.Sprintf("after push. index: %v, value: %v", index, value), func(t *testing.T) {
-			stack.assertEqualMin(t, min)
+			newStack.assertEqualMin(t, min)
 		})
-		stack.Pop()
+		newStack.Pop()
 		t.Run(fmt.Sprintf("after pop. index: %v, value: %v", index, value), func(t *testing.T) {
 			if index == 0 {
-				stack.assertEqualMin(t, nil)
+				newStack.assertEqualMin(t, nil)
 			} else {
-				stack.assertEqualMin(t, oldMin)
+				newStack.assertEqualMin(t, oldMin)
 			}
 		})
-		stack.Push(value)
+		newStack.Push(value)
 		oldMin = min
 	}
 }
 
 func TestStack_SortN(t *testing.T) {
-	stack, arr := setUpStack(1000)
+	newStack, arr := setUpStack(1000)
 	sort.Ints(arr)
-	stack.SortN()
-	stack.assertEqualArray(t, arr)
+	newStack.SortN()
+	newStack.assertEqualArray(t, arr)
 }
 
 func TestStack_Sort(t *testing.T) {
-	stack, arr := setUpStack(50000)
+	newStack, arr := setUpStack(50000)
 	sort.Ints(arr)
-	stack = stack.Sort()
-	stack.assertEqualArray(t, arr)
+	newStack = newStack.Sort()
+	newStack.assertEqualArray(t, arr)
 
 	arrayFloat := []float64{12, 13.1, 0.001, 10, 0}
 	stackFloat := NewStack()
 	stackFloat.AppendArray(arrayFloat)
 	sort.Float64s(arrayFloat)
-	stack.Sort()
-	stack.assertEqualArray(t, arr)
+	newStack.Sort()
+	newStack.assertEqualArray(t, arr)
 }
