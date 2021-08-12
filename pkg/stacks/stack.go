@@ -10,13 +10,16 @@ type (
 	Stack struct {
 		top    *node
 		length int
+		min    *node
 	}
 )
 
-func newStack() *Stack {
+// NewStack constructs and returns a new empty stack
+func NewStack() *Stack {
 	return &Stack{
 		top:    nil,
 		length: 0,
+		min:    nil,
 	}
 }
 
@@ -38,6 +41,7 @@ func (s *Stack) Push(value interface{}) interface{} {
 	}
 	s.top = top
 	s.length += 1
+	s.calcMin(value, false)
 	return s.top.value
 }
 
@@ -53,6 +57,7 @@ func (s *Stack) Pop() (detachedHead interface{}) {
 		s.top = s.top.prev
 	}
 	s.length -= 1
+	s.calcMin(detachedHead, true)
 	return
 }
 
@@ -80,7 +85,7 @@ func (s *Stack) AppendArray(array interface{}) {
 
 // Reverse returns a new stack that has values of the original stack reversed
 func (s *Stack) Reverse() *Stack {
-	stack := newStack()
+	stack := NewStack()
 	for node := s.top; node != nil; {
 		stack.Push(node.value)
 		node = node.prev
@@ -101,6 +106,70 @@ func (s *Stack) AppendReverse(stack *Stack) {
 	}
 }
 
+// Append appends a second stack on top of the original stack
 func (s *Stack) Append(stack *Stack) {
 	s.AppendReverse(stack.Reverse())
+}
+
+func (s *Stack) calcMin(value interface{}, isPop bool) {
+	var valueType interface{}
+	if s.min != nil {
+		valueType = s.min.value
+	} else if value != nil {
+		s.min = &node{
+			value: value,
+		}
+		return
+	} else {
+		return
+	}
+	if isPop && value == s.min.value {
+		s.min = s.min.prev
+		return
+	}
+	switch valueType.(type) {
+	case int:
+		if value.(int) <= s.min.value.(int) {
+			s.pushMin(value)
+		}
+	case int8:
+		if value.(int8) <= s.min.value.(int8) {
+			s.pushMin(value)
+		}
+	case int16:
+		if value.(int16) <= s.min.value.(int16) {
+			s.pushMin(value)
+		}
+	case int32:
+		if value.(int32) <= s.min.value.(int32) {
+			s.pushMin(value)
+		}
+	case int64:
+		if value.(int64) <= s.min.value.(int64) {
+			s.pushMin(value)
+		}
+	case float32:
+		if value.(float32) <= s.min.value.(float32) {
+			s.pushMin(value)
+		}
+	case float64:
+		if value.(float64) <= s.min.value.(float64) {
+			s.pushMin(value)
+		}
+	default:
+		return
+	}
+
+}
+
+func (s *Stack) pushMin(value interface{}) {
+	if s.min == nil {
+		s.min = &node{value, nil}
+	} else {
+		node := &node{
+			value: value,
+			prev:  s.min,
+		}
+		s.min = node
+	}
 }

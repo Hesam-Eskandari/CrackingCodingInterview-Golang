@@ -2,8 +2,10 @@ package Stacks
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func (s *Stack) assertEqualArray(t *testing.T, array interface{}) {
@@ -42,6 +44,17 @@ func (s *Stack) assertEqual(t *testing.T, stack *Stack) {
 	}
 }
 
+func (s *Stack) assertEqualMin(t *testing.T, value interface{}) {
+	if s == nil {
+		panic("assertEqualMin: expected a stack, received nil")
+	}
+	if (s.min != nil && value == nil) || (s.min == nil && value != nil) {
+		t.Errorf("assertEqualMin: single nil error,  %v is not equal to %v", s.min, value)
+	} else if s.min != nil && s.min.value != value {
+		t.Errorf("assertEqualMin: separate values error, %v is not equal to %v", s.min.value, value)
+	}
+}
+
 func (s *Stack) assertEqualTop(t *testing.T, value interface{}) {
 	if s == nil {
 		panic("assertEqualTop: expected a stack, received nil")
@@ -66,8 +79,12 @@ func (s *Stack) assertLength(t *testing.T, length int) {
 }
 
 func setUpStack() (stack *Stack, expectedArray []int) {
-	stack = newStack()
-	expectedArray = []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	stack = NewStack()
+	rand.Seed(time.Now().UnixNano())
+	expectedArray = make([]int, 0, rand.Intn(20)+10)
+	for index := 0; index < cap(expectedArray); index++ {
+		expectedArray = append(expectedArray, rand.Intn(100))
+	}
 	stack.AppendArray(expectedArray)
 	return
 }
@@ -138,4 +155,37 @@ func TestStack_AppendReverse(t *testing.T) {
 	firstStack.AppendReverse(secondStack)
 	firstStack.assertLength(t, len(firstArray)+len(secondArray))
 	firstStack.assertEqualTop(t, secondArray[0])
+}
+
+func TestStack_Min(t *testing.T) {
+	stack := NewStack()
+	arr := []int{4, 2, 6, 3, 2, 4, 7, 1, 8, 0, 2}
+	min := arr[0]
+	oldMin := min
+	for index, value := range arr {
+		t.Run(fmt.Sprintf("before push. index: %v, value: %v", index, value), func(t *testing.T) {
+			if index == 0 {
+				stack.assertEqualMin(t, nil)
+			} else {
+				stack.assertEqualMin(t, min)
+			}
+		})
+		stack.Push(value)
+		if value < min {
+			min = value
+		}
+		t.Run(fmt.Sprintf("after push. index: %v, value: %v", index, value), func(t *testing.T) {
+			stack.assertEqualMin(t, min)
+		})
+		stack.Pop()
+		t.Run(fmt.Sprintf("after pop. index: %v, value: %v", index, value), func(t *testing.T) {
+			if index == 0 {
+				stack.assertEqualMin(t, nil)
+			} else {
+				stack.assertEqualMin(t, oldMin)
+			}
+		})
+		stack.Push(value)
+		oldMin = min
+	}
 }
