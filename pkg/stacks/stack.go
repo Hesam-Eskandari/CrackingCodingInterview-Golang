@@ -99,6 +99,7 @@ func (s *Stack) Reverse() *Stack {
 	return stack
 }
 
+// AppendReverse appends a second stack from top to end to the top of the primary stack
 func (s *Stack) AppendReverse(stack *Stack) {
 	if s == nil {
 		panic("error appending two stacks, the primary stack cannot be nil")
@@ -117,6 +118,7 @@ func (s *Stack) Append(stack *Stack) {
 	s.AppendReverse(stack.Reverse())
 }
 
+// calcMin updates the min linked list if necessary
 func (s *Stack) calcMin(value interface{}, isPop bool) {
 	var valueType interface{}
 	if s.min != nil {
@@ -168,6 +170,7 @@ func (s *Stack) calcMin(value interface{}, isPop bool) {
 
 }
 
+// pushMin pushes a new minimum to the min singly linked list head (top)
 func (s *Stack) pushMin(value interface{}) {
 	if s.min == nil {
 		s.min = &node{value, nil}
@@ -180,7 +183,7 @@ func (s *Stack) pushMin(value interface{}) {
 	}
 }
 
-// SortN replace a stack with a sorted version of it
+// SortN replace a stack with a non-decreasing sorted version of it
 // only one additional stack is allowed to be used
 // only push, pop, top and len methods are allowed to be used
 // runs in O(n) of space and O(n^2) of time complexity where n = stack.Len()
@@ -217,6 +220,8 @@ func (s *Stack) SortN() {
 	}
 }
 
+// Sort returns a non-decreasing sorted copy of the primary stack
+// runs in O(n log(n)) in time and O(n) of space complexity where n = s.Len()
 func (s *Stack) Sort() *Stack {
 	if s.Top() == nil {
 		return nil
