@@ -2,6 +2,7 @@ package Stacks
 
 import (
 	"reflect"
+	"sort"
 )
 
 type (
@@ -214,4 +215,30 @@ func (s *Stack) SortN() {
 	for stack.Top() != nil {
 		s.Push(stack.Pop())
 	}
+}
+
+func (s *Stack) Sort() *Stack {
+	if s.Top() == nil {
+		return nil
+	}
+	stack := s
+	switch s.Top().(type) {
+	case int:
+		arr := make([]int, 0, s.Len())
+		for stack.Top() != nil {
+			arr = append(arr, stack.Pop().(int))
+		}
+		sort.Ints(arr)
+		stack.AppendArray(arr)
+	case float64:
+		arr := make([]float64, 0, s.Len())
+		for stack.Top() != nil {
+			arr = append(arr, stack.Pop().(float64))
+		}
+		sort.Float64s(arr)
+		stack.AppendArray(arr)
+	default:
+		return nil
+	}
+	return stack
 }

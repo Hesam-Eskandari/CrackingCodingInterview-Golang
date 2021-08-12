@@ -198,8 +198,22 @@ func TestStack_Min(t *testing.T) {
 }
 
 func TestStack_SortN(t *testing.T) {
-	stack, arr := setUpStack()
+	stack, arr := setUpStack(1000)
 	sort.Ints(arr)
 	stack.SortN()
+	stack.assertEqualArray(t, arr)
+}
+
+func TestStack_Sort(t *testing.T) {
+	stack, arr := setUpStack(50000)
+	sort.Ints(arr)
+	stack = stack.Sort()
+	stack.assertEqualArray(t, arr)
+
+	arrayFloat := []float64{12, 13.1, 0.001, 10, 0}
+	stackFloat := NewStack()
+	stackFloat.AppendArray(arrayFloat)
+	sort.Float64s(arrayFloat)
+	stack.Sort()
 	stack.assertEqualArray(t, arr)
 }
