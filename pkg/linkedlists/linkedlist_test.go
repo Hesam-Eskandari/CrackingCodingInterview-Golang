@@ -7,10 +7,10 @@ import (
 )
 
 func (l *linkedList) assertEqualArray(t *testing.T, expectedArr []int) {
-	for index, item := range l.ToList() {
+	for index, item := range l.ToArray() {
 		if item != expectedArr[index] {
 			t.Errorf("returned linked list does not match to expected array, returned: %v, expected: %v",
-				l.ToList(), expectedArr)
+				l.ToArray(), expectedArr)
 			break
 		}
 	}
@@ -88,4 +88,11 @@ func TestKthToEnd(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestLinkedList_Replace(t *testing.T) {
+	newList := NewLinkedList().CreateListFromArray([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
+	arr := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
+	newList.Replace(NewLinkedList().CreateListFromArray(arr))
+	newList.assertEqualArray(t, arr)
 }

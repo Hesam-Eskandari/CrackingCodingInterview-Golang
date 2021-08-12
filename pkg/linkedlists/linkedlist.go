@@ -10,14 +10,19 @@ type linkedList struct {
 }
 
 type LinkedList interface {
+	// CreateListFromArray constructs a doubly linkedList from a given array
 	CreateListFromArray(array interface{}) *linkedList
+	// DeleteDuplicates removes redundant nodes assuming it's a singly linked list with only head is given
 	DeleteDuplicates(noAdditionalDatastructures bool)
+	// KthToLast returns the kth element from tail (back) assuming it's a singly linked list with given head
 	KthToLast(k int) *list.Element
-	LRUCache(capacity int)
-	ToList() []int
+	// Replace replaces the list inside the linkedList with a new list
+	Replace(list *linkedList)
+	// ToArray returns an array with values in linked list with same order and size
+	ToArray() []interface{}
 }
 
-func NewLinkedList() *linkedList {
+func NewLinkedList() LinkedList {
 	return &linkedList{
 		list: list.New(),
 	}
@@ -35,17 +40,23 @@ func (l *linkedList) CreateListFromArray(array interface{}) *linkedList {
 	return l
 }
 
-func (l *linkedList) ToList() []int {
-	var arr []int
+// ToArray returns an array with values in linked list with same order and size
+func (l *linkedList) ToArray() []interface{} {
+	var arr []interface{}
 	if l == nil {
 		return arr
 	}
 	element := l.list.Front()
 	for element != nil {
-		arr = append(arr, element.Value.(int))
+		arr = append(arr, element.Value)
 		element = element.Next()
 	}
 	return arr
+}
+
+// Replace replaces the list inside the linkedList with a new list
+func (l *linkedList) Replace(list *linkedList) {
+	l.list = list.list
 }
 
 // DeleteDuplicates removes redundant nodes assuming it's a singly linked list with only head is given
@@ -72,19 +83,20 @@ func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
 		}
 	} else {
 		// O(n) time, O(n) space
-		hmap := make(map[int]bool)
-		hmap[element.Value.(int)] = true
+		hmap := make(map[interface{}]bool)
+		hmap[element.Value] = true
 		for element.Next() != nil {
-			if _, ok := hmap[element.Next().Value.(int)]; ok {
+			if _, ok := hmap[element.Next().Value]; ok {
 				l.list.Remove(element.Next())
 			} else {
-				hmap[element.Next().Value.(int)] = true
+				hmap[element.Next().Value] = true
 				element = element.Next()
 			}
 		}
 	}
 }
 
+// KthToLast returns the kth element from tail (back) assuming it's a singly linked list with given head
 func (l *linkedList) KthToLast(k int) *list.Element {
 	elementAhead := l.list.Front()
 	elementDelay := l.list.Front()
@@ -106,8 +118,4 @@ func (l *linkedList) KthToLast(k int) *list.Element {
 		return nil
 	}
 	return elementDelay
-}
-
-func (l *linkedList) LRUCache(capacity int) {
-
 }
