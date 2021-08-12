@@ -2,26 +2,40 @@ package linkedlists
 
 import (
 	"container/list"
+	"reflect"
 )
 
 type linkedList struct {
 	list *list.List
 }
 
-func newLinkedList() *linkedList {
+type LinkedList interface {
+	CreateListFromArray(array interface{}) *linkedList
+	DeleteDuplicates(noAdditionalDatastructures bool)
+	KthToLast(k int) *list.Element
+	LRUCache(capacity int)
+	ToList() []int
+}
+
+func NewLinkedList() *linkedList {
 	return &linkedList{
 		list: list.New(),
 	}
 }
 
-func (l *linkedList) createListFromArray(arr []int) *linkedList {
-	for _, item := range arr {
-		l.list.PushBack(item)
+// CreateListFromArray constructs a doubly linkedList from a given array
+func (l *linkedList) CreateListFromArray(array interface{}) *linkedList {
+	switch reflect.TypeOf(array).Kind() {
+	case reflect.Slice:
+		arr := reflect.ValueOf(array)
+		for index := 0; index < arr.Len(); index++ {
+			l.list.PushBack(arr.Index(index).Interface())
+		}
 	}
 	return l
 }
 
-func (l *linkedList) toList() []int {
+func (l *linkedList) ToList() []int {
 	var arr []int
 	if l == nil {
 		return arr
@@ -34,8 +48,8 @@ func (l *linkedList) toList() []int {
 	return arr
 }
 
-// assume it's a singly linked list
-func (l *linkedList) deleteDuplicates(noAdditionalDatastructures bool) {
+// DeleteDuplicates removes redundant nodes assuming it's a singly linked list with only head is given
+func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
 	element := l.list.Front()
 	if element == nil {
 		return
@@ -71,7 +85,7 @@ func (l *linkedList) deleteDuplicates(noAdditionalDatastructures bool) {
 	}
 }
 
-func (l *linkedList) kthToLast(k int) *list.Element {
+func (l *linkedList) KthToLast(k int) *list.Element {
 	elementAhead := l.list.Front()
 	elementDelay := l.list.Front()
 	if elementAhead == nil || k < 0 {
@@ -92,4 +106,8 @@ func (l *linkedList) kthToLast(k int) *list.Element {
 		return nil
 	}
 	return elementDelay
+}
+
+func (l *linkedList) LRUCache(capacity int) {
+
 }
