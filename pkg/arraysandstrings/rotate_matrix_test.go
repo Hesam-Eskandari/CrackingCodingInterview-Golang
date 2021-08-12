@@ -50,7 +50,7 @@ func TestRotateMatrix(t *testing.T) {
 	}
 	for _, input := range inputs {
 		t.Run(input.message, func(t *testing.T) {
-			input.mat.rotateMatrix()
+			input.mat.RotateMatrixCW()
 			input.assertEqual(t)
 		})
 	}

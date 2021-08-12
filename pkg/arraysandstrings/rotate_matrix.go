@@ -2,14 +2,13 @@ package arraysandstrings
 
 import "fmt"
 
-/*
-Cracking the coding interview, 6th edition page 91
-
-Rotate Matrix
-*/
-
 type matrix struct {
 	mat [][]int
+}
+
+type Matrix interface {
+	// RotateMatrixCW rotates a two-dimensional matrix 90 degree clockwise
+	RotateMatrixCW()
 }
 
 func NewMatrix(mat [][]int) (*matrix, error) {
@@ -22,7 +21,8 @@ func NewMatrix(mat [][]int) (*matrix, error) {
 	return &matrix{mat}, nil
 }
 
-func (m *matrix) rotateMatrix() {
+// RotateMatrixCW rotates a two-dimensional matrix 90 degree clockwise
+func (m *matrix) RotateMatrixCW() {
 
 	for start := 0; start < len(m.mat)/2; start++ {
 		end := len(m.mat) - start - 1
