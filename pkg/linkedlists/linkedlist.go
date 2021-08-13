@@ -1,7 +1,7 @@
 package linkedlists
 
 import (
-	"container/List"
+	"container/list"
 	"reflect"
 )
 
