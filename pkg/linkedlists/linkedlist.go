@@ -3,6 +3,7 @@ package linkedlists
 import (
 	"container/list"
 	"reflect"
+	"testing"
 )
 
 type linkedList struct {
@@ -10,6 +11,12 @@ type linkedList struct {
 }
 
 type LinkedList interface {
+	// AssertEqualArray if a values and ordering of a linked list is equivalent to an array
+	AssertEqualArray(t *testing.T, expectedArr []int)
+	// AssertEqualElementValue checks if an element value is equal to what is expected
+	AssertEqualElementValue(t *testing.T, element *list.Element, value int)
+	// AssertNilElement checks if an element is nil
+	AssertNilElement(t *testing.T, element *list.Element)
 	// CreateListFromArray constructs a doubly linkedList from a given array
 	CreateListFromArray(array interface{}) *linkedList
 	// DeleteDuplicates removes redundant nodes assuming it's a singly linked List with only head is given

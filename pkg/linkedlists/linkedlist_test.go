@@ -6,7 +6,8 @@ import (
 	"testing"
 )
 
-func (l *linkedList) assertEqualArray(t *testing.T, expectedArr []int) {
+// AssertEqualArray if a values and ordering of a linked list is equivalent to an array
+func (l *linkedList) AssertEqualArray(t *testing.T, expectedArr []int) {
 	for index, item := range l.ToArray() {
 		if item != expectedArr[index] {
 			t.Errorf("returned linked list does not match to expected array, returned: %v, expected: %v",
@@ -16,15 +17,17 @@ func (l *linkedList) assertEqualArray(t *testing.T, expectedArr []int) {
 	}
 }
 
-func (l *linkedList) assertNilElement(t *testing.T, element *list.Element) {
+// AssertNilElement checks if an element is nil
+func (l *linkedList) AssertNilElement(t *testing.T, element *list.Element) {
 	if element != nil {
 		t.Errorf("expected nil returned %v", element.Value)
 	}
 }
 
-func (l *linkedList) assertElementValue(t *testing.T, element *list.Element, value int) {
+// AssertEqualElementValue checks if an element value is equal to what is expected
+func (l *linkedList) AssertEqualElementValue(t *testing.T, element *list.Element, value int) {
 	if element == nil {
-		panic(fmt.Sprintf("assertElementValue: given element is nil, expected value: %v", value))
+		panic(fmt.Sprintf("AssertEqualElementValue: given element is nil, expected value: %v", value))
 	}
 	if element.Value != value {
 		t.Errorf("expected element with value= %v received %v element", value, element.Value)
@@ -52,7 +55,7 @@ func TestDeleteDuplicatesNoAdditionalDatastructures(t *testing.T) {
 	for i, input := range inputs {
 		t.Run(fmt.Sprintf("{%v, %v}", i, input), func(t *testing.T) {
 			input.DeleteDuplicates(true)
-			input.assertEqualArray(t, out[i])
+			input.AssertEqualArray(t, out[i])
 		})
 	}
 }
@@ -62,7 +65,7 @@ func TestDeleteDuplicatesUsingAdditionalDatastructures(t *testing.T) {
 	for i, input := range inputs {
 		t.Run(fmt.Sprintf("{%v, %v}", i, input), func(t *testing.T) {
 			input.DeleteDuplicates(false)
-			input.assertEqualArray(t, out[i])
+			input.AssertEqualArray(t, out[i])
 		})
 	}
 }
@@ -82,9 +85,9 @@ func TestKthToEnd(t *testing.T) {
 			element := input.KthToLast(value)
 
 			if !outValid[index] {
-				input.assertNilElement(t, element)
+				input.AssertNilElement(t, element)
 			} else {
-				input.assertElementValue(t, element, outValue[index])
+				input.AssertEqualElementValue(t, element, outValue[index])
 			}
 		})
 	}
@@ -94,5 +97,5 @@ func TestLinkedList_Replace(t *testing.T) {
 	newList := NewLinkedList().CreateListFromArray([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
 	arr := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
 	newList.Replace(NewLinkedList().CreateListFromArray(arr))
-	newList.assertEqualArray(t, arr)
+	newList.AssertEqualArray(t, arr)
 }
