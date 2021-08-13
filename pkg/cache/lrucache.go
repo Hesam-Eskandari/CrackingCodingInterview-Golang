@@ -46,7 +46,8 @@ func (c *lruCache) GetValue(key interface{}) (interface{}, bool) {
 // returns true if key already existed and false otherwise
 func (c *lruCache) Insert(key, value interface{}) (ok bool) {
 	lst := c.list.GetList()
-	if node, ok := c.hashMap[key]; ok {
+	node, ok := c.hashMap[key]
+	if ok {
 		node.Value = value
 		lst.MoveToFront(node)
 		return
@@ -61,7 +62,8 @@ func (c *lruCache) Insert(key, value interface{}) (ok bool) {
 // Delete removes a given key and its value from the cache
 // returns true if key already existed and false otherwise
 func (c *lruCache) Delete(key interface{}) (ok bool) {
-	if node, ok := c.hashMap[key]; ok {
+	node, ok := c.hashMap[key]
+	if ok {
 		lst := c.list.GetList()
 		lst.Remove(node)
 		delete(c.hashMap, key)
