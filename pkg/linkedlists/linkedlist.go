@@ -1,30 +1,32 @@
 package linkedlists
 
 import (
-	"container/list"
+	"container/List"
 	"reflect"
 )
 
 type linkedList struct {
-	list *list.List
+	List *list.List
 }
 
 type LinkedList interface {
 	// CreateListFromArray constructs a doubly linkedList from a given array
 	CreateListFromArray(array interface{}) *linkedList
-	// DeleteDuplicates removes redundant nodes assuming it's a singly linked list with only head is given
+	// DeleteDuplicates removes redundant nodes assuming it's a singly linked List with only head is given
 	DeleteDuplicates(noAdditionalDatastructures bool)
-	// KthToLast returns the kth element from tail (back) assuming it's a singly linked list with given head
+	// GetList gets the inner list
+	GetList() *list.List
+	// KthToLast returns the kth element from tail (back) assuming it's a singly linked List with given head
 	KthToLast(k int) *list.Element
-	// Replace replaces the list inside the linkedList with a new list
-	Replace(list *linkedList)
-	// ToArray returns an array with values in linked list with same order and size
+	// Replace replaces the List inside the linkedList with a new List
+	Replace(List *linkedList)
+	// ToArray returns an array with values in linked List with same order and size
 	ToArray() []interface{}
 }
 
 func NewLinkedList() LinkedList {
 	return &linkedList{
-		list: list.New(),
+		List: list.New(),
 	}
 }
 
@@ -34,19 +36,19 @@ func (l *linkedList) CreateListFromArray(array interface{}) *linkedList {
 	case reflect.Slice:
 		arr := reflect.ValueOf(array)
 		for index := 0; index < arr.Len(); index++ {
-			l.list.PushBack(arr.Index(index).Interface())
+			l.List.PushBack(arr.Index(index).Interface())
 		}
 	}
 	return l
 }
 
-// ToArray returns an array with values in linked list with same order and size
+// ToArray returns an array with values in linked List with same order and size
 func (l *linkedList) ToArray() []interface{} {
 	var arr []interface{}
 	if l == nil {
 		return arr
 	}
-	element := l.list.Front()
+	element := l.List.Front()
 	for element != nil {
 		arr = append(arr, element.Value)
 		element = element.Next()
@@ -54,14 +56,14 @@ func (l *linkedList) ToArray() []interface{} {
 	return arr
 }
 
-// Replace replaces the list inside the linkedList with a new list
-func (l *linkedList) Replace(list *linkedList) {
-	l.list = list.list
+// Replace replaces the List inside the linkedList with a new List
+func (l *linkedList) Replace(List *linkedList) {
+	l.List = List.List
 }
 
-// DeleteDuplicates removes redundant nodes assuming it's a singly linked list with only head is given
+// DeleteDuplicates removes redundant nodes assuming it's a singly linked List with only head is given
 func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
-	element := l.list.Front()
+	element := l.List.Front()
 	if element == nil {
 		return
 	}
@@ -71,7 +73,7 @@ func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
 			node := element
 			for node.Next() != nil {
 				if node.Next().Value == element.Value {
-					l.list.Remove(node.Next())
+					l.List.Remove(node.Next())
 				} else {
 					node = node.Next()
 				}
@@ -87,7 +89,7 @@ func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
 		hmap[element.Value] = true
 		for element.Next() != nil {
 			if _, ok := hmap[element.Next().Value]; ok {
-				l.list.Remove(element.Next())
+				l.List.Remove(element.Next())
 			} else {
 				hmap[element.Next().Value] = true
 				element = element.Next()
@@ -96,10 +98,10 @@ func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
 	}
 }
 
-// KthToLast returns the kth element from tail (back) assuming it's a singly linked list with given head
+// KthToLast returns the kth element from tail (back) assuming it's a singly linked List with given head
 func (l *linkedList) KthToLast(k int) *list.Element {
-	elementAhead := l.list.Front()
-	elementDelay := l.list.Front()
+	elementAhead := l.List.Front()
+	elementDelay := l.List.Front()
 	if elementAhead == nil || k < 0 {
 		return nil
 	}
@@ -118,4 +120,9 @@ func (l *linkedList) KthToLast(k int) *list.Element {
 		return nil
 	}
 	return elementDelay
+}
+
+// GetList gets the inner list
+func (l *linkedList) GetList() *list.List {
+	return l.List
 }
