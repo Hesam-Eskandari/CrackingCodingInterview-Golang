@@ -2,6 +2,7 @@ package linkedlists
 
 import (
 	"container/list"
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -37,6 +38,34 @@ func NewLinkedList() LinkedList {
 	}
 }
 
+// AssertEqualArray if a values and ordering of a linked list is equivalent to an array
+func (l *linkedList) AssertEqualArray(t *testing.T, expectedArr []int) {
+	for index, item := range l.ToArray() {
+		if item != expectedArr[index] {
+			t.Errorf("returned linked list does not match to expected array, returned: %v, expected: %v",
+				l.ToArray(), expectedArr)
+			break
+		}
+	}
+}
+
+// AssertEqualElementValue checks if an element value is equal to what is expected
+func (l *linkedList) AssertEqualElementValue(t *testing.T, element *list.Element, value int) {
+	if element == nil {
+		panic(fmt.Sprintf("AssertEqualElementValue: given element is nil, expected value: %v", value))
+	}
+	if element.Value != value {
+		t.Errorf("expected element with value= %v received %v element", value, element.Value)
+	}
+}
+
+// AssertNilElement checks if an element is nil
+func (l *linkedList) AssertNilElement(t *testing.T, element *list.Element) {
+	if element != nil {
+		t.Errorf("expected nil returned %v", element.Value)
+	}
+}
+
 // CreateListFromArray constructs a doubly linkedList from a given array
 func (l *linkedList) CreateListFromArray(array interface{}) *linkedList {
 	switch reflect.TypeOf(array).Kind() {
@@ -47,25 +76,6 @@ func (l *linkedList) CreateListFromArray(array interface{}) *linkedList {
 		}
 	}
 	return l
-}
-
-// ToArray returns an array with values in linked List with same order and size
-func (l *linkedList) ToArray() []interface{} {
-	var arr []interface{}
-	if l == nil {
-		return arr
-	}
-	element := l.List.Front()
-	for element != nil {
-		arr = append(arr, element.Value)
-		element = element.Next()
-	}
-	return arr
-}
-
-// Replace replaces the List inside the linkedList with a new List
-func (l *linkedList) Replace(List *linkedList) {
-	l.List = List.List
 }
 
 // DeleteDuplicates removes redundant nodes assuming it's a singly linked List with only head is given
@@ -105,6 +115,11 @@ func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
 	}
 }
 
+// GetList gets the inner list
+func (l *linkedList) GetList() *list.List {
+	return l.List
+}
+
 // KthToLast returns the kth element from tail (back) assuming it's a singly linked List with given head
 func (l *linkedList) KthToLast(k int) *list.Element {
 	elementAhead := l.List.Front()
@@ -129,7 +144,21 @@ func (l *linkedList) KthToLast(k int) *list.Element {
 	return elementDelay
 }
 
-// GetList gets the inner list
-func (l *linkedList) GetList() *list.List {
-	return l.List
+// Replace replaces the List inside the linkedList with a new List
+func (l *linkedList) Replace(List *linkedList) {
+	l.List = List.List
+}
+
+// ToArray returns an array with values in linked List with same order and size
+func (l *linkedList) ToArray() []interface{} {
+	var arr []interface{}
+	if l == nil {
+		return arr
+	}
+	element := l.List.Front()
+	for element != nil {
+		arr = append(arr, element.Value)
+		element = element.Next()
+	}
+	return arr
 }

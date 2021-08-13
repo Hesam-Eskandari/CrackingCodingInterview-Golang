@@ -1,38 +1,9 @@
 package linkedlists
 
 import (
-	"container/list"
 	"fmt"
 	"testing"
 )
-
-// AssertEqualArray if a values and ordering of a linked list is equivalent to an array
-func (l *linkedList) AssertEqualArray(t *testing.T, expectedArr []int) {
-	for index, item := range l.ToArray() {
-		if item != expectedArr[index] {
-			t.Errorf("returned linked list does not match to expected array, returned: %v, expected: %v",
-				l.ToArray(), expectedArr)
-			break
-		}
-	}
-}
-
-// AssertNilElement checks if an element is nil
-func (l *linkedList) AssertNilElement(t *testing.T, element *list.Element) {
-	if element != nil {
-		t.Errorf("expected nil returned %v", element.Value)
-	}
-}
-
-// AssertEqualElementValue checks if an element value is equal to what is expected
-func (l *linkedList) AssertEqualElementValue(t *testing.T, element *list.Element, value int) {
-	if element == nil {
-		panic(fmt.Sprintf("AssertEqualElementValue: given element is nil, expected value: %v", value))
-	}
-	if element.Value != value {
-		t.Errorf("expected element with value= %v received %v element", value, element.Value)
-	}
-}
 
 func setUpDeleteDuplicates() (inputs []*linkedList, out [][]int) {
 	inputs = []*linkedList{
