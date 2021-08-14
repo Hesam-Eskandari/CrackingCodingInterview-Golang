@@ -111,7 +111,8 @@ func (c *lruCache) Insert(key, value interface{}) bool {
 // Delete removes a given key and its value from the cache
 // returns true if key already existed and false otherwise
 func (c *lruCache) Delete(key interface{}) (ok bool) {
-	node, ok := c.hashMap[key]
+	var node *list.Element
+	node, ok = c.hashMap[key]
 	if ok {
 		lst := c.List.GetList()
 		lst.Remove(node)
