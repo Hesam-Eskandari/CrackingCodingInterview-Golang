@@ -35,8 +35,10 @@ type LRUCache interface {
 	// LoopAndRun loops over a compatible function from start to end
 	LoopAndRun(t *testing.T, start, end, capacity int, value func(in interface{}) interface{}, arr []interface{}, function func(
 		t *testing.T, cache LRUCache, array []interface{}, index int, value interface{}, capacity int) []interface{}) (array []interface{})
-	// ToArray returns an array with values in linked List with same order and size
-	ToArray() []interface{}
+	// ToArrayKeys returns an array with keys in linked List with same order and size
+	ToArrayKeys() []interface{}
+	// ToArrayValues returns an array with values in linked List with same order and size
+	ToArrayValues() []interface{}
 }
 
 func NewLRUCache(capacity int) LRUCache {
@@ -59,7 +61,7 @@ func (c *lruCache) AssertEqualArray(t *testing.T, array []interface{}) {
 	if c == nil {
 		panic("assertEqualArray: nil cache inserted")
 	}
-	arr := c.ToArray()
+	arr := c.ToArrayKeys()
 	if arr == nil {
 		if len(array) > 0 {
 			t.Errorf("AssertEqualArray: expected %v, got %v", array, nil)
@@ -148,8 +150,22 @@ func (c *lruCache) LoopAndRun(t *testing.T, start, end, capacity int,
 	return arr
 }
 
-// ToArray returns an array with values in linked List with same order and size
-func (c *lruCache) ToArray() []interface{} {
+// ToArrayKeys returns an array with keys in linked List with same order and size
+func (c *lruCache) ToArrayKeys() []interface{} {
+	var arr []interface{}
+	if c == nil {
+		return arr
+	}
+	element := c.List.GetList().Front()
+	for element != nil {
+		arr = append(arr, element.Value.(KeyValue).Key)
+		element = element.Next()
+	}
+	return arr
+}
+
+// ToArrayValues returns an array with values in linked List with same order and size
+func (c *lruCache) ToArrayValues() []interface{} {
 	var arr []interface{}
 	if c == nil {
 		return arr

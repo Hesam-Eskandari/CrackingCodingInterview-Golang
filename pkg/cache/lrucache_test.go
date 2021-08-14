@@ -26,7 +26,7 @@ func insertEachIteration(t *testing.T, cache LRUCache, array []interface{}, inde
 			panic(err)
 		}
 	}
-	array = append(array, value)
+	array = append(array, index)
 	if len(array) >= capacity {
 		array = array[len(array)-capacity:]
 	}
@@ -38,7 +38,7 @@ func getValueEachIteration(t *testing.T, cache LRUCache, array []interface{}, in
 	_, ok := cache.GetValue(index)
 	if ok {
 		var err error
-		array = append(array, value)
+		array = append(array, index)
 		if array, err = utils.ArrayRemoveDuplicatesBack(array); err != nil {
 			panic(err)
 		}
@@ -58,7 +58,8 @@ func TestLruCache_GetValue(t *testing.T) {
 	capacity := 10
 	cache := setupLRUCache(capacity)
 	makeTwice := func(in interface{}) interface{} { return reflect.ValueOf(2 * in.(int)).Interface() }
+	makeTrice := func(in interface{}) interface{} { return reflect.ValueOf(3 * in.(int)).Interface() }
 	arr := cache.LoopAndRun(t, 0, capacity+5, capacity, makeTwice, nil, insertEachIteration)
 	arr = cache.LoopAndRun(t, 5, capacity, capacity, makeTwice, arr, getValueEachIteration)
-	cache.LoopAndRun(t, 0, 2*capacity+50, capacity, makeTwice, arr, insertEachIteration)
+	cache.LoopAndRun(t, 0, 2*capacity+50, capacity, makeTrice, arr, insertEachIteration)
 }
