@@ -1,8 +1,9 @@
 package cache
 
 import (
-	"fmt"
+	"github.com/Data-Structures-Golang/pkg/utils"
 	"math/rand"
+	"reflect"
 	"testing"
 )
 
@@ -17,21 +18,48 @@ func setupLRUCache(arr ...int) LRUCache {
 
 }
 
+func insertEachIteration(t *testing.T, cache LRUCache, array []interface{}, index int, value interface{}, capacity int) []interface{} {
+	existed := cache.Insert(index, value)
+	var err error
+	if existed {
+		if array, err = utils.ArrayRemoveDuplicatesBack(array); err != nil {
+			panic(err)
+		}
+	}
+	array = append(array, value)
+	if len(array) >= capacity {
+		array = array[len(array)-capacity:]
+	}
+	cache.AssertEqualArray(t, array)
+	return array
+}
+
+func getValueEachIteration(t *testing.T, cache LRUCache, array []interface{}, index int, value interface{}, capacity int) []interface{} {
+	_, ok := cache.GetValue(index)
+	if ok {
+		var err error
+		array = append(array, value)
+		if array, err = utils.ArrayRemoveDuplicatesBack(array); err != nil {
+			panic(err)
+		}
+	}
+	cache.AssertEqualArray(t, array)
+	return array
+}
+
 func TestLruCache_Insert(t *testing.T) {
 	capacity := 10
 	cache := setupLRUCache(capacity)
-	arr := make([]int, 0, 2*capacity)
-	for index := 0; index < 2*capacity; index++ {
-		cache.Insert(index, 2*index)
-		arr = append(arr, 2*index)
-		linkedList := cache.GetLinkedList()
-		var start int
-		if index < capacity {
-			start = 0
-		} else {
-			start = index - capacity + 1
-		}
-		fmt.Println("here", linkedList.ToArray())
-		linkedList.AssertEqualArray(t, arr[start:index+1])
-	}
+	cache.LoopAndRun(t, 0, capacity+50, capacity, func(in interface{}) interface{} {
+		return reflect.ValueOf(2 * in.(int)).Interface()
+	}, nil, insertEachIteration)
+}
+
+func TestLruCache_GetValue(t *testing.T) {
+	capacity := 10
+	cache := setupLRUCache(capacity)
+	makeTwice := func(in interface{}) interface{} { return reflect.ValueOf(2 * in.(int)).Interface() }
+	arr := cache.LoopAndRun(t, 0, capacity+5, capacity, makeTwice, nil, insertEachIteration)
+	arr = cache.LoopAndRun(t, 5, capacity, capacity, makeTwice, arr, getValueEachIteration)
+	cache.LoopAndRun(t, 0, 2*capacity+50, capacity, makeTwice, arr, insertEachIteration)
 }
