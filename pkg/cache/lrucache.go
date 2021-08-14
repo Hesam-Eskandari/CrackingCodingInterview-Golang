@@ -35,6 +35,7 @@ type LRUCache interface {
 	// LoopAndRun loops over a compatible function from start to end
 	LoopAndRun(t *testing.T, start, end, capacity int, value func(in interface{}) interface{}, arr []interface{}, function func(
 		t *testing.T, cache LRUCache, array []interface{}, index int, value interface{}, capacity int) []interface{}) (array []interface{})
+	// ToArray returns an array with values in linked List with same order and size
 	ToArray() []interface{}
 }
 
