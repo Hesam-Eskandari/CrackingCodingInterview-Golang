@@ -50,9 +50,8 @@ func getValueEachIteration(t *testing.T, cache LRUCache, array []interface{}, in
 func TestLruCache_Insert(t *testing.T) {
 	capacity := 10
 	cache := setupLRUCache(capacity)
-	cache.LoopAndRun(t, 0, capacity+50, capacity, func(in interface{}) interface{} {
-		return reflect.ValueOf(2 * in.(int)).Interface()
-	}, nil, insertEachIteration)
+	makeTwice := func(in interface{}) interface{} { return reflect.ValueOf(2 * in.(int)).Interface() }
+	cache.LoopAndRun(t, 0, capacity+50, capacity, makeTwice, nil, insertEachIteration)
 }
 
 func TestLruCache_GetValue(t *testing.T) {
