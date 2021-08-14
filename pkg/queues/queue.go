@@ -6,7 +6,8 @@ import (
 )
 
 type queue struct {
-	list *list.List
+	list     *list.List
+	capacity int // zero capacity is equivalent to unlimited capacity
 }
 
 type Queue interface {
@@ -40,9 +41,16 @@ type Queue interface {
 	ValidateLength(funcName string) (err error)
 }
 
-func NewQueue() Queue {
+func NewQueue(capacity ...int) Queue {
+	var maxLength int
+	if len(capacity) == 0 {
+		maxLength = 0
+	} else {
+		maxLength = capacity[0]
+	}
 	return &queue{
-		list: list.New(),
+		list:     list.New(),
+		capacity: maxLength, // zero capacity is equivalent to unlimited capacity
 	}
 }
 
@@ -52,6 +60,10 @@ func (q *queue) Add(value interface{}) (err error) {
 	if _, err = q.Len(); err != nil {
 		return
 	}
+	if err = q.checkCapacity(); err != nil {
+		return
+	}
+
 	q.list.PushBack(value)
 	return
 }
@@ -62,6 +74,9 @@ func (q *queue) AppendArray(array []interface{}) (err error) {
 		return
 	}
 	for index := range array {
+		if err = q.checkCapacity(); err != nil {
+			return
+		}
 		q.list.PushFront(array[len(array)-index-1])
 	}
 	return
@@ -76,6 +91,9 @@ func (q *queue) AppendQueue(queue Queue) (err error) {
 		return
 	}
 	for node := queue.GetList().Back(); node != nil; {
+		if err = q.checkCapacity(); err != nil {
+			return
+		}
 		q.list.PushFront(node)
 		node = node.Prev()
 	}
@@ -211,6 +229,13 @@ func (q *queue) ValidateLength(funcName string) (err error) {
 	}
 	if length == 0 {
 		return fmt.Errorf("%s: cannot operate with queue of length zero", funcName)
+	}
+	return
+}
+
+func (q *queue) checkCapacity() (err error) {
+	if q.capacity != 0 && q.list.Len() >= q.capacity {
+		return fmt.Errorf("reached queue capacity= %v", q.capacity)
 	}
 	return
 }
