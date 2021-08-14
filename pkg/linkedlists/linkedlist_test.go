@@ -5,17 +5,33 @@ import (
 	"testing"
 )
 
-func setUpDeleteDuplicates() (inputs []*linkedList, out [][]int) {
+func setUpDeleteDuplicates() (inputs []*linkedList, out [][]interface{}) {
 	inputs = []*linkedList{
-		NewLinkedList().CreateListFromArray([]int{}),
-		NewLinkedList().CreateListFromArray([]int{1}),
-		NewLinkedList().CreateListFromArray([]int{1, 2, 4, 5, 3, 4, 5}),
-		NewLinkedList().CreateListFromArray([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}),
+		NewLinkedList().CreateListFromArray([]interface{}{}),
+		NewLinkedList().CreateListFromArray([]interface{}{1}),
+		NewLinkedList().CreateListFromArray([]interface{}{1, 2, 4, 5, 3, 4, 5}),
+		NewLinkedList().CreateListFromArray([]interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9}),
 	}
-	out = [][]int{
+	out = [][]interface{}{
 		{},
 		{1},
 		{1, 2, 4, 5, 3},
+		{1, 2, 3, 4, 5, 6, 7, 8, 9},
+	}
+	return
+}
+
+func setUpDeleteDuplicatesBack() (inputs []*linkedList, out [][]interface{}) {
+	inputs = []*linkedList{
+		NewLinkedList().CreateListFromArray([]interface{}{}),
+		NewLinkedList().CreateListFromArray([]interface{}{1}),
+		NewLinkedList().CreateListFromArray([]interface{}{1, 2, 4, 5, 3, 4, 5}),
+		NewLinkedList().CreateListFromArray([]interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9}),
+	}
+	out = [][]interface{}{
+		{},
+		{1},
+		{1, 2, 3, 4, 5},
 		{1, 2, 3, 4, 5, 6, 7, 8, 9},
 	}
 	return
@@ -36,6 +52,26 @@ func TestDeleteDuplicatesUsingAdditionalDatastructures(t *testing.T) {
 	for i, input := range inputs {
 		t.Run(fmt.Sprintf("{%v, %v}", i, input), func(t *testing.T) {
 			input.DeleteDuplicates(false)
+			input.AssertEqualArray(t, out[i])
+		})
+	}
+}
+
+func TestDeleteDuplicatesBackNoAdditionalDatastructures(t *testing.T) {
+	inputs, out := setUpDeleteDuplicatesBack()
+	for i, input := range inputs {
+		t.Run(fmt.Sprintf("{%v, %v}", i, input), func(t *testing.T) {
+			input.DeleteDuplicatesBack(true)
+			input.AssertEqualArray(t, out[i])
+		})
+	}
+}
+
+func TestDeleteDuplicatesBackUsingAdditionalDatastructures(t *testing.T) {
+	inputs, out := setUpDeleteDuplicatesBack()
+	for i, input := range inputs {
+		t.Run(fmt.Sprintf("{%v, %v}", i, input), func(t *testing.T) {
+			input.DeleteDuplicatesBack(false)
 			input.AssertEqualArray(t, out[i])
 		})
 	}
@@ -66,7 +102,7 @@ func TestKthToEnd(t *testing.T) {
 
 func TestLinkedList_Replace(t *testing.T) {
 	newList := NewLinkedList().CreateListFromArray([]int{1, 2, 3, 4, 5, 6, 7, 8, 9})
-	arr := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
+	arr := []interface{}{9, 8, 7, 6, 5, 4, 3, 2, 1}
 	newList.Replace(NewLinkedList().CreateListFromArray(arr))
 	newList.AssertEqualArray(t, arr)
 }

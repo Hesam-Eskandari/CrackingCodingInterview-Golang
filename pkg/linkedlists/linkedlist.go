@@ -13,21 +13,25 @@ type linkedList struct {
 
 type LinkedList interface {
 	// AssertEqualArray if a values and ordering of a linked list is equivalent to an array
-	AssertEqualArray(t *testing.T, expectedArr []int)
+	AssertEqualArray(t *testing.T, expectedArr []interface{})
 	// AssertEqualElementValue checks if an element value is equal to what is expected
 	AssertEqualElementValue(t *testing.T, element *list.Element, value int)
 	// AssertNilElement checks if an element is nil
 	AssertNilElement(t *testing.T, element *list.Element)
 	// CreateListFromArray constructs a doubly linkedList from a given array
 	CreateListFromArray(array interface{}) *linkedList
+	// DeleteDuplicatesBack removes redundant nodes assuming it's a singly linked List with only head is given
+	DeleteDuplicatesBack(noAdditionalDatastructures bool)
 	// DeleteDuplicates removes redundant nodes assuming it's a singly linked List with only head is given
 	DeleteDuplicates(noAdditionalDatastructures bool)
 	// GetList gets the inner list
 	GetList() *list.List
 	// KthToLast returns the kth element from tail (back) assuming it's a singly linked List with given head
 	KthToLast(k int) *list.Element
-	// Replace replaces the List inside the linkedList with a new List
+	// Replace replaces the linked list with a new linked list
 	Replace(List *linkedList)
+	// SetList replaces the List inside the linkedList with a new List
+	SetList(list *list.List)
 	// ToArray returns an array with values in linked List with same order and size
 	ToArray() []interface{}
 }
@@ -39,8 +43,16 @@ func NewLinkedList() LinkedList {
 }
 
 // AssertEqualArray if a values and ordering of a linked list is equivalent to an array
-func (l *linkedList) AssertEqualArray(t *testing.T, expectedArr []int) {
-	for index, item := range l.ToArray() {
+func (l *linkedList) AssertEqualArray(t *testing.T, expectedArr []interface{}) {
+	if l == nil {
+		panic("AssertEqualArray: given linked list is nil")
+	}
+	arr := l.ToArray()
+	fmt.Println("step3.1")
+	if len(expectedArr) != len(arr) {
+		t.Errorf("AssertEqualArray: linked list and expected array are not the same size")
+	}
+	for index, item := range arr {
 		if item != expectedArr[index] {
 			t.Errorf("returned linked list does not match to expected array, returned: %v, expected: %v",
 				l.ToArray(), expectedArr)
@@ -78,7 +90,7 @@ func (l *linkedList) CreateListFromArray(array interface{}) *linkedList {
 	return l
 }
 
-// DeleteDuplicates removes redundant nodes assuming it's a singly linked List with only head is given
+// DeleteDuplicates removes redundant nodes assuming it's a singly linked List with only front is given
 func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
 	element := l.List.Front()
 	if element == nil {
@@ -102,14 +114,51 @@ func (l *linkedList) DeleteDuplicates(noAdditionalDatastructures bool) {
 		}
 	} else {
 		// O(n) time, O(n) space
-		hmap := make(map[interface{}]bool)
-		hmap[element.Value] = true
+		hMap := make(map[interface{}]bool)
+		hMap[element.Value] = true
 		for element.Next() != nil {
-			if _, ok := hmap[element.Next().Value]; ok {
+			if _, ok := hMap[element.Next().Value]; ok {
 				l.List.Remove(element.Next())
 			} else {
-				hmap[element.Next().Value] = true
+				hMap[element.Next().Value] = true
 				element = element.Next()
+			}
+		}
+	}
+}
+
+// DeleteDuplicatesBack removes redundant nodes assuming it's a singly linked List with only back is given
+func (l *linkedList) DeleteDuplicatesBack(noAdditionalDatastructures bool) {
+	element := l.List.Back()
+	if element == nil {
+		return
+	}
+	if noAdditionalDatastructures {
+		// O(n^2) time, O(1) space
+		for element.Prev() != nil {
+			node := element
+			for node.Prev() != nil {
+				if node.Prev().Value == element.Value {
+					l.List.Remove(node.Prev())
+				} else {
+					node = node.Prev()
+				}
+			}
+			element = element.Prev()
+			if element == nil {
+				break
+			}
+		}
+	} else {
+		// O(n) time, O(n) space
+		hMap := make(map[interface{}]bool)
+		hMap[element.Value] = true
+		for element.Prev() != nil {
+			if _, ok := hMap[element.Prev().Value]; ok {
+				l.List.Remove(element.Prev())
+			} else {
+				hMap[element.Prev().Value] = true
+				element = element.Prev()
 			}
 		}
 	}
@@ -147,6 +196,11 @@ func (l *linkedList) KthToLast(k int) *list.Element {
 // Replace replaces the List inside the linkedList with a new List
 func (l *linkedList) Replace(List *linkedList) {
 	l.List = List.List
+}
+
+// SetList replaces the list with a given list
+func (l *linkedList) SetList(list *list.List) {
+	l.List = list
 }
 
 // ToArray returns an array with values in linked List with same order and size
