@@ -2,13 +2,12 @@ package cache
 
 import (
 	"container/list"
-	"github.com/Data-Structures-Golang/pkg/linkedlists"
 	"testing"
 )
 
 type lruCache struct {
 	capacity int
-	List     linkedlists.LinkedList
+	list     *list.List
 	hashMap  map[interface{}]*list.Element
 }
 
@@ -25,8 +24,8 @@ type LRUCache interface {
 	// Delete removes a given key and its value from the cache
 	// returns true if key already existed and false otherwise
 	Delete(key interface{}) bool
-	// GetLinkedList returns the underlying linked list
-	GetLinkedList() linkedlists.LinkedList
+	// GetList returns the underlying linked list
+	GetList() *list.List
 	// GetValue retrieves the value corresponding to a key if exists any
 	GetValue(key interface{}) (interface{}, bool)
 	// Insert adds a new key-value to cache or updates the existing one
@@ -35,16 +34,16 @@ type LRUCache interface {
 	// LoopAndRun loops over a compatible function from start to end
 	LoopAndRun(t *testing.T, start, end, capacity int, value func(in interface{}) interface{}, arr []interface{}, function func(
 		t *testing.T, cache LRUCache, array []interface{}, index int, value interface{}, capacity int) []interface{}) (array []interface{})
-	// ToArrayKeys returns an array with keys in linked List with same order and size
+	// ToArrayKeys returns an array with keys in linked list with same order and size
 	ToArrayKeys() []interface{}
-	// ToArrayValues returns an array with values in linked List with same order and size
+	// ToArrayValues returns an array with values in linked list with same order and size
 	ToArrayValues() []interface{}
 }
 
 func NewLRUCache(capacity int) LRUCache {
 	return &lruCache{
 		capacity: capacity,
-		List:     linkedlists.NewLinkedList(),
+		list:     list.New(),
 		hashMap:  make(map[interface{}]*list.Element),
 	}
 }
@@ -85,7 +84,7 @@ func (c *lruCache) AssertEqualArray(t *testing.T, array []interface{}) {
 func (c *lruCache) GetValue(key interface{}) (interface{}, bool) {
 	node, ok := c.hashMap[key]
 	if ok {
-		lst := c.List.GetList()
+		lst := c.list
 		lst.MoveToBack(node)
 		return node.Value.(KeyValue).Value, ok
 	}
@@ -95,7 +94,7 @@ func (c *lruCache) GetValue(key interface{}) (interface{}, bool) {
 // Insert adds a new key-value to cache or updates the existing one
 // returns true if key already existed and false otherwise
 func (c *lruCache) Insert(key, value interface{}) bool {
-	lst := c.List.GetList()
+	lst := c.list
 	node, ok := c.hashMap[key]
 	if ok {
 		node.Value = NewKeyValue(key, value)
@@ -116,7 +115,7 @@ func (c *lruCache) Delete(key interface{}) (ok bool) {
 	var node *list.Element
 	node, ok = c.hashMap[key]
 	if ok {
-		lst := c.List.GetList()
+		lst := c.list
 		lst.Remove(node)
 		delete(c.hashMap, key)
 	}
@@ -126,13 +125,13 @@ func (c *lruCache) Delete(key interface{}) (ok bool) {
 // Clear resets the cache to empty state
 func (c *lruCache) Clear(newCapacity int) {
 	c.hashMap = make(map[interface{}]*list.Element)
-	c.List = linkedlists.NewLinkedList()
+	c.list = list.New()
 	c.capacity = newCapacity
 }
 
-// GetLinkedList returns the underlying linked list
-func (c *lruCache) GetLinkedList() linkedlists.LinkedList {
-	return c.List
+// GetList returns the underlying linked list
+func (c *lruCache) GetList() *list.List {
+	return c.list
 }
 
 // LoopAndRun loops over a compatible function from start to end
@@ -150,13 +149,13 @@ func (c *lruCache) LoopAndRun(t *testing.T, start, end, capacity int,
 	return arr
 }
 
-// ToArrayKeys returns an array with keys in linked List with same order and size
+// ToArrayKeys returns an array with keys in linked list with same order and size
 func (c *lruCache) ToArrayKeys() []interface{} {
 	var arr []interface{}
 	if c == nil {
 		return arr
 	}
-	element := c.List.GetList().Front()
+	element := c.list.Front()
 	for element != nil {
 		arr = append(arr, element.Value.(KeyValue).Key)
 		element = element.Next()
@@ -164,13 +163,13 @@ func (c *lruCache) ToArrayKeys() []interface{} {
 	return arr
 }
 
-// ToArrayValues returns an array with values in linked List with same order and size
+// ToArrayValues returns an array with values in linked list with same order and size
 func (c *lruCache) ToArrayValues() []interface{} {
 	var arr []interface{}
 	if c == nil {
 		return arr
 	}
-	element := c.List.GetList().Front()
+	element := c.list.Front()
 	for element != nil {
 		arr = append(arr, element.Value.(KeyValue).Value)
 		element = element.Next()
