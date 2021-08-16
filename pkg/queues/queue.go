@@ -6,11 +6,8 @@ import (
 )
 
 type queue struct {
-	capacity                 int // zero capacity is equivalent to unlimited capacity
-	list                     *list.List
-	queueIsEmptyException    *QueueIsEmptyException
-	queueIsFullException     *QueueIsFullException
-	queueHasNilListException *QueueHasNilListException
+	capacity int // zero capacity is equivalent to unlimited capacity
+	list     *list.List
 }
 
 type Queue interface {
@@ -64,11 +61,8 @@ func NewQueue(capacity ...int) Queue {
 		maxLength = capacity[0]
 	}
 	return &queue{
-		capacity:                 maxLength, // zero capacity is equivalent to unlimited capacity
-		list:                     list.New(),
-		queueIsEmptyException:    &QueueIsEmptyException{""},
-		queueIsFullException:     &QueueIsFullException{capacity: maxLength},
-		queueHasNilListException: &QueueHasNilListException{},
+		capacity: maxLength, // zero capacity is equivalent to unlimited capacity
+		list:     list.New(),
 	}
 }
 
@@ -140,7 +134,7 @@ func (q *queue) Len() (length int, err error) {
 		return length, &QueueIsNilException{}
 	}
 	if q.list == nil {
-		return length, q.queueHasNilListException
+		return length, &QueueHasNilListException{}
 	}
 	length = q.list.Len()
 	return
@@ -274,15 +268,14 @@ func (q *queue) ValidateLength(funcName string) (err error) {
 		return
 	}
 	if length == 0 {
-		q.queueIsEmptyException.funcName = funcName
-		return q.queueIsEmptyException
+		return &QueueIsEmptyException{funcName: funcName}
 	}
 	return
 }
 
 func (q *queue) checkCapacity() (err error) {
 	if q.capacity != 0 && q.list.Len() >= q.capacity {
-		return q.queueIsFullException
+		return &QueueIsFullException{capacity: q.capacity}
 	}
 	return
 }
