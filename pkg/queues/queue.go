@@ -50,8 +50,8 @@ type Queue interface {
 	AssertEqualArray(t *testing.T, array []interface{})
 	// AssertEqualPeek verifies the value of the peek
 	AssertEqualPeek(t *testing.T, value interface{})
-	// AssertValueAtIndex verifies the value located in an index from the end of queue
-	AssertValueAtIndex(t *testing.T, index int, value interface{})
+	// AssertEqualValueAtIndex verifies the value located in an index from the end of queue
+	AssertEqualValueAtIndex(t *testing.T, index int, value interface{})
 	// AssertError checks if an error is not nil during testing
 	AssertError(t *testing.T, err error)
 }
@@ -315,19 +315,19 @@ func (q *queue) AssertEqualPeek(t *testing.T, value interface{}) {
 	}
 }
 
-// AssertValueAtIndex verifies the value located in an index from the end of queue
-func (q *queue) AssertValueAtIndex(t *testing.T, index int, value interface{}) {
+// AssertEqualValueAtIndex verifies the value located in an index from the end of queue
+func (q *queue) AssertEqualValueAtIndex(t *testing.T, index int, value interface{}) {
 	// validate queue
-	if err := q.ValidateLength("AssertValueAtIndex"); err != nil {
+	if err := q.ValidateLength("AssertEqualValueAtIndex"); err != nil {
 		t.Errorf(err.Error())
 	}
 	if index > q.list.Len()-1 {
-		t.Errorf("AssertValueAtIndex: index error: index %v should be less than queue length: %v", index, q.list.Len())
+		t.Errorf("AssertEqualValueAtIndex: index error: index %v should be less than queue length: %v", index, q.list.Len())
 	}
 	array, _ := q.ToArray()
 	val := array[index]
 	if val != value {
-		t.Errorf("AssertValueAtIndex: value of the queue at index %v is expected"+
+		t.Errorf("AssertEqualValueAtIndex: value of the queue at index %v is expected"+
 			" to be %v but it is equal to %v", index, value, val)
 	}
 }
