@@ -1,6 +1,7 @@
 package Stacks
 
 import (
+	"github.com/Data-Structures-Golang/pkg/utils"
 	"reflect"
 	"sort"
 )
@@ -19,14 +20,14 @@ type (
 
 type Stack interface {
 	// Append appends a second stack on top of the original stack
-	Append(stack *stack)
+	Append(stack *stack) error
 	// AppendArray pushes the item values of the array starting from index zero to the stack
 	AppendArray(array interface{})
 	// AppendReverse appends a second stack from top to end to the top of the primary stack
-	AppendReverse(stack *stack)
+	AppendReverse(stack *stack) error
 	// Len returns the number of nodes in the stack
 	Len() int
-	// Pop removes the top node and returns its value. It also assign the previous node as the new top
+	// Pop removes the top node and returns its value. It also assigns the previous node as the new top
 	Pop() (detachedHead interface{})
 	// Push adds a node with given value to the stack. Also moves the top to the new added node
 	Push(value interface{}) interface{}
@@ -84,7 +85,8 @@ func (s *stack) Push(value interface{}) interface{} {
 // Pop removes the top node and returns its value. It also assign the previous node as the new top
 func (s *stack) Pop() (detachedHead interface{}) {
 	if s.top == nil {
-		panic("cannot remove the top node of an empty stack")
+
+		panic(StackTopIsNilException{"Pop"})
 	}
 	detachedHead = s.top.value
 	if s.top.prev == nil {
@@ -130,22 +132,23 @@ func (s *stack) Reverse() *stack {
 }
 
 // AppendReverse appends a second stack from top to end to the top of the primary stack
-func (s *stack) AppendReverse(stack *stack) {
+func (s *stack) AppendReverse(stack *stack) error {
 	if s == nil {
-		panic("error appending two stacks, the primary stack cannot be nil")
+		return &utils.StructIsNilException{DataStructure: "AppendReverse", FuncName: "Stack"}
 	}
 	if stack == nil {
-		return
+		return &utils.StructIsNilException{DataStructure: "AppendReverse", FuncName: "Stack"}
 	}
 	for node := stack.top; node != nil; {
 		s.Push(node.value)
 		node = node.prev
 	}
+	return nil
 }
 
 // Append appends a second stack on top of the original stack
-func (s *stack) Append(stack *stack) {
-	s.AppendReverse(stack.Reverse())
+func (s *stack) Append(stack *stack) error {
+	return s.AppendReverse(stack.Reverse())
 }
 
 // calcMin updates the min linked list if necessary

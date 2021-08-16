@@ -79,6 +79,12 @@ func (s *stack) assertLength(t *testing.T, length int) {
 	}
 }
 
+func (s *stack) raiseError(t *testing.T, err error) {
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+}
+
 func setUpStack(size ...int) (newStack *stack, expectedArray []int) {
 	newStack = NewStack()
 	rand.Seed(time.Now().UnixNano())
@@ -159,7 +165,9 @@ func TestStack_AppendArray(t *testing.T) {
 func TestStack_AppendReverse(t *testing.T) {
 	firstStack, firstArray := setUpStack()
 	secondStack, secondArray := setUpStack()
-	firstStack.AppendReverse(secondStack)
+	if err := firstStack.AppendReverse(secondStack); err != nil {
+		firstStack.raiseError(t, err)
+	}
 	firstStack.assertLength(t, len(firstArray)+len(secondArray))
 	firstStack.assertEqualTop(t, secondArray[0])
 }
