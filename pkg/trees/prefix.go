@@ -1,7 +1,6 @@
 package trees
 
 import (
-	"fmt"
 	"github.com/Data-Structures-Golang/pkg/utils"
 )
 
@@ -14,7 +13,6 @@ type trieNode struct {
 	complete bool
 	value    rune
 	children [26]*trieNode
-	level    int
 }
 
 func NewTrie() Trie {
@@ -22,7 +20,6 @@ func NewTrie() Trie {
 		root: &trieNode{
 			complete: false,
 			value:    0,
-			level:    0,
 		},
 	}
 }
@@ -51,10 +48,8 @@ func (t *trie) Insert(word string) (err error) {
 		if index == len(word)-1 {
 			endOfWord = true
 		}
-		fmt.Println("insert:", r, string(r), int(r-65))
 		head.children[int(r)-65] = &trieNode{
 			complete: endOfWord,
-			level:    index + 1,
 			value:    r,
 		}
 		head = head.children[int(r)-65]

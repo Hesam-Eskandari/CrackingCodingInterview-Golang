@@ -48,7 +48,6 @@ func (l *linkedList) AssertEqualArray(t *testing.T, expectedArr []interface{}) {
 		panic("AssertEqualArray: given linked list is nil")
 	}
 	arr := l.ToArray()
-	fmt.Println("step3.1")
 	if len(expectedArr) != len(arr) {
 		t.Errorf("AssertEqualArray: linked list and expected array are not the same size")
 	}
