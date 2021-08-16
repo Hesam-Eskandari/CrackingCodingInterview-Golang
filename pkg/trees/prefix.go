@@ -17,7 +17,7 @@ type trieNode struct {
 	level    int
 }
 
-func NewTrie() *trie {
+func NewTrie() Trie {
 	return &trie{
 		root: &trieNode{
 			complete: false,
