@@ -46,7 +46,7 @@ type Queue interface {
 	ToArray() (array []interface{}, err error)
 	// ValidateLength validates the queue is not nil and has the length of at lease one
 	ValidateLength(funcName string) (err error)
-	// 	AssertEqualArray checks if a queue and an array have the same values in the same order
+	// AssertEqualArray verifies the queue and an array have the same values in the same order
 	AssertEqualArray(t *testing.T, array []interface{})
 	// AssertEqualPeek verifies the value of the peek
 	AssertEqualPeek(t *testing.T, value interface{})
@@ -287,6 +287,7 @@ func (q *queue) checkCapacity() (err error) {
 	return
 }
 
+// 	AssertEqualArray verifies the queue and an array have the same values in the same order
 func (q *queue) AssertEqualArray(t *testing.T, array []interface{}) {
 	// validate queue
 	if err := q.ValidateLength("AssertEqualArray"); err != nil {
