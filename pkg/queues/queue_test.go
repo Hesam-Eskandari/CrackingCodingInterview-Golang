@@ -1,7 +1,6 @@
 package queues
 
 import (
-	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -12,6 +11,7 @@ func assertEqualValue(t *testing.T, value1, value2 interface{}) {
 		t.Errorf("assertEqualValue: first value: %v and second value: %v are not equal", value1, value2)
 	}
 }
+
 func setupQueue(capacity, length int) (queue Queue, array []interface{}) {
 	rand.Seed(time.Now().UnixNano())
 	if capacity == -1 {
@@ -76,8 +76,6 @@ func TestQueue_Pop(t *testing.T) {
 	length := 45
 	queue, array := setupQueue(50, length)
 	for index := 0; index < length-1; index++ {
-		arr, _ := queue.ToArray()
-		fmt.Println("here1", arr)
 		value, err := queue.Pop()
 		if err != nil {
 			queue.AssertError(t, err)
